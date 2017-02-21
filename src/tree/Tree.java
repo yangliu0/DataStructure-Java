@@ -1,12 +1,13 @@
 package tree;
 
 /**
- * 对二叉树进行前序、中序、后序遍历
+ * 对二叉树进行前序、中序、后序、层序遍历
  * 递归与非递归实现
- * preOrder midOrder posOrder分别为递归实现
- * preOrder1 midOrder1 posOrder1分别为非递归实现
+ * preOrder midOrder posOrder、levelOrder分别为递归实现
+ * preOrder1 midOrder1 posOrder1、levelOrder1分别为非递归实现
  */
-
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 public class Tree<AnyType extends Comparable<? super AnyType>>
@@ -109,6 +110,53 @@ public class Tree<AnyType extends Comparable<? super AnyType>>
         }
     }
 
+    /*
+     * 层序遍历
+     * 递归
+     */
+    public void levelOrder(BinaryNode<AnyType> Node) {
+        if (Node == null) {
+            return;
+        }
+
+        int depth = depth(Node);
+
+        for (int i = 1; i <= depth; i++) {
+            levelOrder(Node, i);
+        }
+    }
+
+    private void levelOrder(BinaryNode<AnyType> Node, int level) {
+        if (Node == null || level < 1) {
+            return;
+        }
+
+        if (level == 1) {
+            System.out.print(Node.element + "  ");
+            return;
+        }
+
+        // 左子树
+        levelOrder(Node.left, level - 1);
+
+        // 右子树
+        levelOrder(Node.right, level - 1);
+    }
+
+    public int depth(BinaryNode<AnyType> Node) {
+        if (Node == null) {
+            return 0;
+        }
+
+        int l = depth(Node.left);
+        int r = depth(Node.right);
+        if (l > r) {
+            return l + 1;
+        } else {
+            return r + 1;
+        }
+    }
+
     /**
      * 前序遍历
      * 非递归
@@ -187,7 +235,33 @@ public class Tree<AnyType extends Comparable<? super AnyType>>
                 Node = Node.right;
             }
         }
+    }
 
+    /*
+     * 层序遍历
+     * 非递归
+     */
+    public void levelOrder1(BinaryNode<AnyType> Node) {
+        if (Node == null) {
+            return;
+        }
+
+        BinaryNode<AnyType> binaryNode;
+        Queue<BinaryNode> queue = new LinkedList<>();
+        queue.add(Node);
+
+        while (queue.size() != 0) {
+            binaryNode = queue.poll();
+
+            System.out.print(binaryNode.element + "  ");
+
+            if (binaryNode.left != null) {
+                queue.offer(binaryNode.left);
+            }
+            if (binaryNode.right != null) {
+                queue.offer(binaryNode.right);
+            }
+        }
     }
 
     public static void main( String[] args )
@@ -210,5 +284,9 @@ public class Tree<AnyType extends Comparable<? super AnyType>>
         tree.posOrder(tree.root);
         System.out.print("\n非递归后序遍历 ：");
         tree.posOrder1(tree.root);
+        System.out.print("\n递归层序遍历：");
+        tree.levelOrder(tree.root);
+        System.out.print("\n非递归层序遍历 ：");
+        tree.levelOrder1(tree.root);
     }
 }
